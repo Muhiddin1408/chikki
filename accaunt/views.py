@@ -1,0 +1,175 @@
+import random
+
+from django.shortcuts import render
+from rest_framework_jwt.settings import api_settings
+jwt_payload_handler = api_settings.JWT_PAYLOAD_HANDLER
+jwt_encode_handler = api_settings.JWT_ENCODE_HANDLER
+# Create your views here.
+from rest_framework import status
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.response import Response
+
+from accaunt.models import User
+from accaunt.serializers import CustomuserSerializer
+
+
+@api_view(['POST'])
+@permission_classes([AllowAny, ])
+def register(request):
+    try:
+        first_name = request.data.get('first_name')
+        phone = request.data.get('phone')
+        smscode = request.data.get('sms_code')
+        if not phone:
+            res = {
+                'msg': 'Login empty',
+                'status': 0,
+            }
+            return Response(res)
+
+        number = User.objects.filter(username=phone).first()
+        if not number:
+            number = User.objects.create(
+                username=phone,
+                first_name=first_name,
+
+            )
+        elif number:
+            smscode = random.randint(1000, 9999)
+            number.phone = int(phone)
+            number.smscode = smscode
+            number.save()
+            send_sms(phone, "Tasdiqlash codi " + str(smscode))
+            if number:
+                result = {
+                    'status': 1,
+                    'msg': 'The SMS was sent again',
+                    'user': CustomuserSerializer(number, many=False, context={"request": request}).data,
+                }
+                return Response(result, status=status.HTTP_200_OK)
+            else:
+                res = {
+                    'status': 0,
+                    'msg': 'Can not authenticate with the given credentials or the account has been deactivated'
+                }
+                return Response(res, status=status.HTTP_403_FORBIDDEN)
+        smscode = random.randint(1000, 9999)
+        number.phone = int(phone)
+        number.smscode = smscode
+        number.save()
+        send_sms(phone, "Tasdiqlash codi " + str(smscode))
+        if number:
+            result = {
+                'status': 1,
+                'msg': 'Sms sended',
+                'user': CustomuserSerializer(number, many=False, context={"request": request}).data,
+            }
+            return Response(result, status=status.HTTP_200_OK)
+        else:
+            res = {
+                'status': 0,
+                'msg': 'Can not authenticate with the given credentials or the account has been deactivated'
+            }
+            return Response(res, status=status.HTTP_403_FORBIDDEN)
+    except KeyError:
+        res = {
+            'status': 0,
+            'msg': 'Please set all reqiured fields'
+        }
+        return Response(res)
+
+
+@api_view(['POST'])
+@permission_classes([AllowAny, ])
+def register_accepted(request):
+    try:
+        phone = request.data.get('phone')
+        sms_code = request.data.get('sms_code')
+        user = User.objects.filter(username=phone).first()
+        if user and user.sms_code == int(sms_code):
+            if user.sms_status == False:
+                user.sms_status = True
+            user.save()
+            payload = jwt_payload_handler(user)
+            token = jwt_encode_handler(payload)
+            result = {
+                'status': 1,
+                'msg': 'Sms sended',
+                'user': CustomuserSerializer(user, many=False, context={"request": request}).data,
+                'token': token,
+            }
+
+            return Response(result, status=status.HTTP_200_OK)
+        else:
+            result = {
+                'status': 2,
+                'msg': 'Sms send not equal',
+            }
+            return Response(result, status=status.HTTP_200_OK)
+
+    except KeyError:
+        res = {
+            'status': 0,
+            'msg': 'Please set all reqiured fields'
+        }
+        return Response(res)
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated, ])
+def profil(request):
+    try:
+        first_name = request.data.get('first_name')
+        last_name = request.data.get('last_name')
+        avatar = request.data.get('avatar')
+        user = request.user
+        user.avatar = avatar
+        user.first_name = first_name
+        user.last_name = last_name
+        user.complete = 2
+        if 'avatar' in request.data:
+            user.avatar = request.data['avatar']
+        user.save()
+        result = {
+            'status': 1,
+            'msg': 'User updated',
+            'user': CustomuserSerializer(user, many=False, context={"request": request}).data
+        }
+        return Response(result, status=status.HTTP_200_OK)
+    except KeyError:
+        res = {
+            'status': 0,
+            'msg': 'Please set all reqiured fields'
+        }
+        return Response(res)
+
+
+import requests
+from requests.auth import HTTPBasicAuth
+
+
+def send_sms(phone, message):
+    code = 'td_1'
+    login = "onlinestartup"
+    password = "gR82S3z"
+    posturl = 'http://91.204.239.44/broker-api/send'
+    jsonData = {
+        'messages': [
+            {
+                'recipient': phone,
+                'message-id': code,
+                'sms': {
+                    'originator': '3700',
+                    'content': {
+                        'text': message
+                    }
+                }
+            }
+        ]
+    }
+    r = requests.post(posturl, json=jsonData, auth=HTTPBasicAuth(login, password))
+    if r.status_code == 200:
+        print('sms_code=>', r, r.status_code, jsonData)
+        return r
+
