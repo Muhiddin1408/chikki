@@ -20,6 +20,7 @@ def register(request):
     try:
         first_name = request.data.get('first_name')
         phone = request.data.get('phone')
+        print(phone)
         smscode = request.data.get('sms_code')
         if not phone:
             res = {
@@ -36,9 +37,9 @@ def register(request):
 
             )
         elif number:
-            smscode = random.randint(1000, 9999)
+            sms_code = random.randint(1000, 9999)
             number.phone = int(phone)
-            number.smscode = smscode
+            number.sms_code = sms_code
             number.save()
             send_sms(phone, "Tasdiqlash codi " + str(smscode))
             if number:
@@ -54,11 +55,11 @@ def register(request):
                     'msg': 'Can not authenticate with the given credentials or the account has been deactivated'
                 }
                 return Response(res, status=status.HTTP_403_FORBIDDEN)
-        smscode = random.randint(1000, 9999)
+        sms_code = random.randint(1000, 9999)
         number.phone = int(phone)
-        number.smscode = smscode
+        number.sms_code = sms_code
         number.save()
-        send_sms(phone, "Tasdiqlash codi " + str(smscode))
+        send_sms(phone, "Tasdiqlash codi " + str(sms_code))
         if number:
             result = {
                 'status': 1,
@@ -84,7 +85,7 @@ def register(request):
 @permission_classes([AllowAny, ])
 def register_accepted(request):
     try:
-        phone = request.data.get('phone')
+        phone = str(request.data.get('phone'))
         sms_code = request.data.get('sms_code')
         user = User.objects.filter(username=phone).first()
         if user and user.sms_code == int(sms_code):
