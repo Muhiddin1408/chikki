@@ -6,4 +6,7 @@ from accaunt.models import User
 class CustomuserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = '__all__'
+        fields = (
+            'username',
+            'first_name'
+        )
