@@ -191,7 +191,13 @@ class Home(viewsets.ModelViewSet):
         return Response(d)
 
 
-class Product(viewsets.ModelViewSet):
+class ProductViewset(viewsets.ModelViewSet):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
 
+    @action(methods=['post'], detail=False)
+    def by_id(self, request):
+        id=int(request.GET.get('id'))
+        b=Product.objects.filter(restorant_id=id)
+        serializer = self.get_serializer(b, many=True)
+        return Response(serializer.data)

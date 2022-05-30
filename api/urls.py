@@ -6,7 +6,7 @@ from chikkiconf import settings
 #
 router = DefaultRouter()
 router.register('home', Home)
-router.register('product', Product)
+router.register('product', ProductViewset, basename='product')
 
 
 urlpatterns = [
@@ -14,6 +14,5 @@ urlpatterns = [
 
     path('register_accepted/', register_accepted),
     path('', include(router.urls)),
-    # path('product/', register),
 
 ] +static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
