@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'api',
     'accaunt',
     'location_field.apps.DefaultConfig',
+    'django_filters',
 ]
 
 MIDDLEWARE = [
@@ -144,9 +145,9 @@ REST_FRAMEWORK = {
         'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
         'rest_framework.authentication.BasicAuthentication',
     ),
-    'DEFAULT_FILTER_BACKENDS': (
-        'rest_framework_filters.backends.DjangoFilterBackend',
-    ),
+    # 'DEFAULT_FILTER_BACKENDS': (
+    #     'rest_framework_filters.backends.DjangoFilterBackend',
+    # ),
 }
 from datetime import timedelta
 import datetime

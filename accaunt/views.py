@@ -1,17 +1,21 @@
 import random
 
 from django.shortcuts import render
+
 from rest_framework_jwt.settings import api_settings
+
+from api.models import *
+
 jwt_payload_handler = api_settings.JWT_PAYLOAD_HANDLER
 jwt_encode_handler = api_settings.JWT_ENCODE_HANDLER
 # Create your views here.
-from rest_framework import status
-from rest_framework.decorators import api_view, permission_classes
+from rest_framework import status, viewsets
+from rest_framework.decorators import api_view, permission_classes, action
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 
 from accaunt.models import User
-from accaunt.serializers import CustomuserSerializer
+from accaunt.serializers import CustomuserSerializer, RestorantSerializer
 
 
 @api_view(['POST'])
@@ -21,7 +25,7 @@ def register(request):
         first_name = request.data.get('first_name')
         phone = request.data.get('phone')
         print(phone)
-        smscode = request.data.get('sms_code')
+        sms_code = request.data.get('sms_code')
         if not phone:
             res = {
                 'msg': 'Login empty',
@@ -41,7 +45,7 @@ def register(request):
             number.phone = int(phone)
             number.sms_code = sms_code
             number.save()
-            send_sms(phone, "Tasdiqlash codi " + str(smscode))
+            send_sms(phone, "Tasdiqlash codi " + str(sms_code))
             if number:
                 result = {
                     'status': 1,
@@ -85,7 +89,7 @@ def register(request):
 @permission_classes([AllowAny, ])
 def register_accepted(request):
     try:
-        phone = str(request.data.get('phone'))
+        phone = request.data.get('phone')
         sms_code = request.data.get('sms_code')
         user = User.objects.filter(username=phone).first()
         if user and user.sms_code == int(sms_code):
@@ -173,4 +177,16 @@ def send_sms(phone, message):
     if r.status_code == 200:
         print('sms_code=>', r, r.status_code, jsonData)
         return r
+
+
+class Home(viewsets.ModelViewSet):
+    queryset = Restorant.objects.all()
+    serializer_class = RestorantSerializer
+
+    @action(methods=['post'], detail=False)
+    def search(self, request):
+        f = request.GET.get('f')
+        filter = Restorant.objects.filter(name=f)
+        d = RestorantSerializer(filter, many=True).data
+        return Response(d)
 
