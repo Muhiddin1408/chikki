@@ -29,11 +29,13 @@ class Product(models.Model):
         ('metr', 'metr')
     ]
     name = models.CharField(max_length=125)
-    restorant = models.ForeignKey(Restorant, on_delete=models.CASCADE)
+    restaurant = models.ForeignKey(Restorant, on_delete=models.CASCADE)
     price = models.FloatField()
     measurement = models.CharField(max_length=125, choices=measure)
     text = models.TextField()
     type = models.ForeignKey(Type, on_delete=models.CASCADE)
+    status = models.BooleanField(default=False)
+    preparation_time = models.IntegerField(blank=True, null=True)
 
     def __str__(self):
         return self.name
