@@ -1,6 +1,7 @@
 import random
 
 from django.shortcuts import render
+from rest_framework.pagination import PageNumberPagination
 
 from rest_framework_jwt.settings import api_settings
 
@@ -15,7 +16,13 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 
 from accaunt.models import User
-from accaunt.serializers import CustomuserSerializer, RestorantSerializer, ProductSerializer
+from accaunt.serializers import *
+
+
+class StandardResultsSetPagination(PageNumberPagination):
+    page_size = 10
+    page_size_query_param = 'page_size'
+    max_page_size = 1000
 
 
 @api_view(['POST'])
@@ -194,10 +201,40 @@ class Home(viewsets.ModelViewSet):
 class ProductViewset(viewsets.ModelViewSet):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
+    pagination_class = StandardResultsSetPagination
 
     @action(methods=['get'], detail=False)
     def by_id(self, request):
-        id=int(request.GET.get('id'))
-        b=Product.objects.filter(restaurant_id=id)
+        id = int(request.GET.get('id'))
+        b = Product.objects.filter(restaurant_id=id)
+        page = self.paginate_queryset(b)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
         serializer = self.get_serializer(b, many=True)
         return Response(serializer.data)
+
+    @action(methods=['get'], detail=False)
+    def by_type(self, request):
+        restaurant = int(request.GET.get('restaurant'))
+        type = int(request.GET.get('type'))
+        b = Product.objects.filter(restaurant=restaurant, type=type)
+        page = self.paginate_queryset(b)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+        serializer = self.get_serializer(b, many=True)
+        return Response(serializer.data)
+
+    @action(methods=['get'], detail=False)
+    def id(self, request):
+        id = request.GET.get('id')
+        b = Product.objects.filter(id=id)
+        serializer = self.get_serializer(b, many=True)
+        return Response(serializer.data)
+
+
+class OrderViewset(viewsets.ModelViewSet):
+    queryset = Order.objects.all()
+    serializer_class = OrderSerializer
+    pagination_class = StandardResultsSetPagination

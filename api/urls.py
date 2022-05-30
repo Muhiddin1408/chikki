@@ -7,6 +7,7 @@ from chikkiconf import settings
 router = DefaultRouter()
 router.register('home', Home)
 router.register('product', ProductViewset, basename='product')
+router.register('order', OrderViewset, basename='order')
 
 
 urlpatterns = [

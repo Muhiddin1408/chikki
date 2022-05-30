@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
 from accaunt.models import User
-from api.models import Restorant, Product
+from api.models import *
 
 
 class CustomuserSerializer(serializers.ModelSerializer):
@@ -37,3 +37,12 @@ class ProductSerializer(serializers.ModelSerializer):
             'preparation_time',
 
         )
+
+
+class OrderSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Order
+        fields = '__all__'
+
+
