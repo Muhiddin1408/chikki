@@ -22,11 +22,18 @@ class RestorantSerializer(serializers.ModelSerializer):
 
 class ProductSerializer(serializers.ModelSerializer):
     restaurant = serializers.ReadOnlyField(source='restaurant.name')
+    type = serializers.ReadOnlyField(source='type.name')
 
     class Meta:
         model = Product
         fields = (
             'name',
-            'restaurant'
+            'restaurant',
+            'type',
+            'price',
+            'measurement',
+            'text',
+            'status',
+            'preparation_time',
 
         )

@@ -195,7 +195,7 @@ class ProductViewset(viewsets.ModelViewSet):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
 
-    @action(methods=['post'], detail=False)
+    @action(methods=['get'], detail=False)
     def by_id(self, request):
         id=int(request.GET.get('id'))
         b=Product.objects.filter(restaurant_id=id)
