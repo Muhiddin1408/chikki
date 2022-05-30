@@ -6,11 +6,14 @@ from chikkiconf import settings
 #
 router = DefaultRouter()
 router.register('home', Home)
+router.register('product', Product)
 
 
 urlpatterns = [
     path('register/', register),
+
     path('register_accepted/', register_accepted),
     path('', include(router.urls)),
+    # path('product/', register),
 
 ] +static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

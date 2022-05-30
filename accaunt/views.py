@@ -15,7 +15,7 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 
 from accaunt.models import User
-from accaunt.serializers import CustomuserSerializer, RestorantSerializer
+from accaunt.serializers import CustomuserSerializer, RestorantSerializer, ProductSerializer
 
 
 @api_view(['POST'])
@@ -189,4 +189,9 @@ class Home(viewsets.ModelViewSet):
         filter = Restorant.objects.filter(name=f)
         d = RestorantSerializer(filter, many=True).data
         return Response(d)
+
+
+class Product(viewsets.ModelViewSet):
+    queryset = Product.objects.all()
+    serializer_class = ProductSerializer
 
