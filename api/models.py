@@ -1,6 +1,9 @@
 from django.db import models
 
 # Create your models here.
+from django.db.models import Sum
+from django.db.models.functions import Coalesce
+
 from accaunt.models import User
 
 
@@ -17,6 +20,23 @@ class Restorant(models.Model):
     @property
     def get_all_products(self):
         return list(Product.objects.filter(restaurant_id=self.id).values('name', 'text', 'image', 'price'))
+
+    @property
+    def get_all_type(self):
+        return list(Type.objects.all().values('name',))
+
+    @property
+    def get_star(self):
+        star = Star.objects.filter(restaurant_id=self.id)
+        sum = star.aggregate(foo=Coalesce(
+            Sum('star'), 0
+        ))['foo']
+        star_quantity = star.count()
+        if sum == 0:
+            q = 0
+        else:
+            q = sum/star_quantity
+        return q
 
 
 class Type(models.Model):
@@ -47,6 +67,12 @@ class Product(models.Model):
         return self.name
 
 
+class Star(models.Model):
+    restaurant = models.ForeignKey(Restorant, on_delete=models.CASCADE)
+    star = models.IntegerField()
+
+
+
 class Order(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
@@ -56,3 +82,5 @@ class Order(models.Model):
         return self.user.username + ' ' +self.product.name
 
 
+# class OrderItem(models.Model):
+#

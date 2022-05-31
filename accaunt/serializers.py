@@ -17,7 +17,13 @@ class RestorantSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Restorant
-        fields = '__all__'
+        fields = [
+            'id',
+            'name',
+            'image',
+            'get_all_type',
+            'get_star'
+        ]
 
 
 class RestaurantSerializer(serializers.ModelSerializer):
