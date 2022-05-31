@@ -198,10 +198,9 @@ class Home(viewsets.ModelViewSet):
         return Response(d)
 
 
-class ProductViewset(viewsets.ModelViewSet):
+class RestaurantViewset(viewsets.ModelViewSet):
     queryset = Product.objects.all()
-    serializer_class = ProductSerializer
-    pagination_class = StandardResultsSetPagination
+    serializer_class = RestaurantSerializer
 
     @action(methods=['get'], detail=False)
     def by_id(self, request):
@@ -213,6 +212,12 @@ class ProductViewset(viewsets.ModelViewSet):
             return self.get_paginated_response(serializer.data)
         serializer = self.get_serializer(b, many=True)
         return Response(serializer.data)
+
+
+class ProductViewset(viewsets.ModelViewSet):
+    queryset = Product.objects.all()
+    serializer_class = ProductSerializer
+    pagination_class = StandardResultsSetPagination
 
     @action(methods=['get'], detail=False)
     def by_type(self, request):
