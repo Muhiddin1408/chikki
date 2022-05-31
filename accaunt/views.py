@@ -203,9 +203,10 @@ class RestaurantViewset(viewsets.ModelViewSet):
     serializer_class = RestaurantSerializer
 
     @action(methods=['get'], detail=False)
-    def by_id(self, request):
-        id = int(request.GET.get('id'))
-        b = Product.objects.filter(restaurant_id=id)
+    def by_type(self, request):
+        restaurant = int(request.GET.get('restaurant'))
+        type = int(request.GET.get('type'))
+        b = Product.objects.filter(restaurant=restaurant, type=type)
         page = self.paginate_queryset(b)
         if page is not None:
             serializer = self.get_serializer(page, many=True)
@@ -218,18 +219,6 @@ class ProductViewset(viewsets.ModelViewSet):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
     pagination_class = StandardResultsSetPagination
-
-    @action(methods=['get'], detail=False)
-    def by_type(self, request):
-        restaurant = int(request.GET.get('restaurant'))
-        type = int(request.GET.get('type'))
-        b = Product.objects.filter(restaurant=restaurant, type=type)
-        page = self.paginate_queryset(b)
-        if page is not None:
-            serializer = self.get_serializer(page, many=True)
-            return self.get_paginated_response(serializer.data)
-        serializer = self.get_serializer(b, many=True)
-        return Response(serializer.data)
 
     @action(methods=['get'], detail=False)
     def id(self, request):
