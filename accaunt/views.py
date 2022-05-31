@@ -201,10 +201,11 @@ class Home(viewsets.ModelViewSet):
 class RestaurantViewset(viewsets.ModelViewSet):
     queryset = Product.objects.all()
     serializer_class = RestaurantSerializer
+    pagination_class = StandardResultsSetPagination
 
     @action(methods=['get'], detail=False)
     def by_type(self, request):
-        restaurant = int(request.GET.get('restaurant'))
+        restaurant = request.GET.get('restaurant')
         if request.GET.get('type'):
             type = int(request.GET.get('type'))
         else:

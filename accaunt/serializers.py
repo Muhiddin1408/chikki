@@ -22,7 +22,7 @@ class RestorantSerializer(serializers.ModelSerializer):
 
 class RestaurantSerializer(serializers.ModelSerializer):
     restaurant = serializers.ReadOnlyField(source='restaurant.name')
-    restaurant_image = serializers.ReadOnlyField(source='restaurant.image')
+    restaurant_image = serializers.ReadOnlyField(source='restaurant.image.url')
     class Meta:
         model = Product
         fields = (
