@@ -211,7 +211,7 @@ class RestaurantViewset(viewsets.ModelViewSet):
             type = int(request.GET.get('type'))
         else:
             type = 1
-        b = Product.objects.filter(restaurant=restaurant, type=type)
+        b = Restorant.objects.filter(id=restaurant)
         page = self.paginate_queryset(b)
         if page is not None:
             serializer = self.get_serializer(page, many=True)
