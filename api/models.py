@@ -32,6 +32,7 @@ class Product(models.Model):
     name = models.CharField(max_length=125)
     restaurant = models.ForeignKey(Restorant, on_delete=models.CASCADE)
     price = models.FloatField()
+    image = models.ImageField(blank=True, null=True)
     measurement = models.CharField(max_length=125, choices=measure)
     text = models.TextField()
     type = models.ForeignKey(Type, on_delete=models.CASCADE)
