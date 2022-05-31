@@ -14,6 +14,10 @@ class Restorant(models.Model):
     def __str__(self):
         return self.name
 
+    @property
+    def get_all_products(self):
+        return list(Product.objects.filter(restaurant_id=self.id).values('name', 'text', 'image', 'price'))
+
 
 class Type(models.Model):
     name = models.CharField(max_length=125)

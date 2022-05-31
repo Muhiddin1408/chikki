@@ -14,6 +14,7 @@ from rest_framework import status, viewsets
 from rest_framework.decorators import api_view, permission_classes, action
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
+from rest_framework import generics
 
 from accaunt.models import User
 from accaunt.serializers import *
@@ -199,9 +200,9 @@ class Home(viewsets.ModelViewSet):
 
 
 class RestaurantViewset(viewsets.ModelViewSet):
-    queryset = Product.objects.all()
-    serializer_class = RestaurantSerializer
-    pagination_class = StandardResultsSetPagination
+    queryset = Restorant.objects.all()
+    serializer_class = RestaurantSerializerTest
+    # pagination_class = StandardResultsSetPagination
 
     @action(methods=['get'], detail=False)
     def by_type(self, request):
@@ -236,6 +237,11 @@ class OrderViewset(viewsets.ModelViewSet):
     queryset = Order.objects.all()
     serializer_class = OrderSerializer
     pagination_class = StandardResultsSetPagination
+
+
+class RestorantList(generics.ListAPIView):
+    queryset = Restorant.objects.all()
+    serializer_class = RestaurantSerializerTest
 
 
 

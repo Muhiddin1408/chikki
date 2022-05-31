@@ -16,5 +16,6 @@ urlpatterns = [
 
     path('register_accepted/', register_accepted),
     path('', include(router.urls)),
+    path('restorant-list/', RestorantList.as_view())
 
 ] +static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

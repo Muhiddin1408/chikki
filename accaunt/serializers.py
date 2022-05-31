@@ -34,6 +34,19 @@ class RestaurantSerializer(serializers.ModelSerializer):
         )
 
 
+class RestaurantSerializerTest(serializers.ModelSerializer):
+    # restaurant = serializers.ReadOnlyField(source='restaurant.name')
+    # restaurant_image = serializers.ReadOnlyField(source='restaurant.image.url')
+
+    class Meta:
+        model = Restorant
+        fields = [
+            'name',
+            'image',
+            'get_all_products',
+        ]
+
+
 class ProductSerializer(serializers.ModelSerializer):
     restaurant = serializers.ReadOnlyField(source='restaurant.name')
     type = serializers.ReadOnlyField(source='type.name')
