@@ -21,7 +21,7 @@ class Restorant(models.Model):
 
     @property
     def get_all_type(self):
-        return list(Type.objects.all().values('id',))
+        return list(Type.objects.all().values('id', 'name'))
 
 
 class Type(models.Model):

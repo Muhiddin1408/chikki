@@ -44,30 +44,30 @@ class ProductRestaurantSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Product
-        fields = ['id', 'name', 'price', 'image']
+        fields = ('id', 'name', 'price', 'image', "text")
 
-
-class RestaurantSerializerTest(serializers.ModelSerializer):
-    # restaurant = serializers.ReadOnlyField(source='restaurant.name')
-    # restaurant_image = serializers.ReadOnlyField(source='restaurant.image.url')
-    products = serializers.SerializerMethodField()
-
-    class Meta:
-        model = Restorant
-        fields = [
-            'name',
-            'image',
-            'products',
-        ]
-
-    def get_products(self, obj):
-        _type = self.context['request'].GET.get('type', 1)
-        if _type:
-            products = obj.products.filter(type=_type)
-        else:
-            products = obj.products.all()
-        serializer = ProductRestaurantSerializer(products, many=True)
-        return serializer.data
+#
+# class RestaurantSerializerTest(serializers.ModelSerializer):
+#     # restaurant = serializers.ReadOnlyField(source='restaurant.name')
+#     # restaurant_image = serializers.ReadOnlyField(source='restaurant.image.url')
+#     products = serializers.SerializerMethodField()
+#
+#     class Meta:
+#         model = Restorant
+#         fields = [
+#             'name',
+#             'image',
+#             'products',
+#         ]
+#
+#     def get_products(self, obj):
+#         _type = self.context['request'].GET.get('type', 1)
+#         if _type:
+#             products = obj.products.filter(type=_type)
+#         else:
+#             products = obj.products.all()
+#         serializer = ProductRestaurantSerializer(products, many=True)
+#         return serializer.data
     # def to_representation(self, instance):
     #     print(instance, 'id')
     #     data = super().to_representation(instance)
