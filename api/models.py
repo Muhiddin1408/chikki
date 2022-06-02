@@ -18,7 +18,6 @@ class Restorant(models.Model):
     def __str__(self):
         return self.name
 
-
     @property
     def get_all_type(self):
         return list(Type.objects.all().values('id', 'name'))
