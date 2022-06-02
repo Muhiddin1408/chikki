@@ -23,7 +23,7 @@ class Restorant(models.Model):
 
     @property
     def get_all_type(self):
-        return list(Type.objects.all().values('name',))
+        return list(Type.objects.all().values('id',))
 
     @property
     def get_star(self):

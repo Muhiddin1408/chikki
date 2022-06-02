@@ -73,6 +73,13 @@ class ProductSerializer(serializers.ModelSerializer):
         )
 
 
+# class StarSerializer(serializers.ModelSerializer):
+#
+#     class Meta:
+#         model = Star
+#         fields = '__all__'
+
+
 class OrderSerializer(serializers.ModelSerializer):
 
     class Meta:
