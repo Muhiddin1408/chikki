@@ -11,6 +11,7 @@ class Restorant(models.Model):
     name = models.CharField(max_length=125)
     address = models.CharField(max_length=125)
     image = models.ImageField(upload_to="restorant")
+    star = models.IntegerField(blank=True, null=True)
     start_date = models.TimeField(blank=True, null=True)
     finish_date = models.TimeField(blank=True, null=True)
 
@@ -19,24 +20,11 @@ class Restorant(models.Model):
 
     @property
     def get_all_products(self):
-        return list(Product.objects.filter(restaurant_id=self.id).values('name', 'text', 'image', 'price'))
+        return list(Product.objects.filter(restaurant_id=self.id).values('id', 'type', 'name', 'text', 'image', 'price'))
 
     @property
     def get_all_type(self):
         return list(Type.objects.all().values('id',))
-
-    @property
-    def get_star(self):
-        star = Star.objects.filter(restaurant_id=self.id)
-        sum = star.aggregate(foo=Coalesce(
-            Sum('star'), 0
-        ))['foo']
-        star_quantity = star.count()
-        if sum == 0:
-            q = 0
-        else:
-            q = sum/star_quantity
-        return q
 
 
 class Type(models.Model):
@@ -65,12 +53,6 @@ class Product(models.Model):
 
     def __str__(self):
         return self.name
-
-
-class Star(models.Model):
-    restaurant = models.ForeignKey(Restorant, on_delete=models.CASCADE)
-    star = models.IntegerField()
-
 
 
 class Order(models.Model):

@@ -22,7 +22,7 @@ class RestorantSerializer(serializers.ModelSerializer):
             'name',
             'image',
             'get_all_type',
-            'get_star'
+            'star'
         ]
 
 
@@ -52,10 +52,22 @@ class RestaurantSerializerTest(serializers.ModelSerializer):
             'get_all_products',
         ]
 
+    def to_representation(self, instance):
+        print(instance, 'id')
+        data = super().to_representation(instance)
+        print(data)
+        # data['get_all_products'] = ProductFilialBaseSerializer(instance=instance.product).data
+        products = data['get_all_products']
+        for p in products:
+            if p.get('type') :
+                print(p.get('type'))
+
+
+
 
 class ProductSerializer(serializers.ModelSerializer):
     restaurant = serializers.ReadOnlyField(source='restaurant.name')
-    type = serializers.ReadOnlyField(source='type.name')
+    # type = serializers.ReadOnlyField(source='type.na')
 
     class Meta:
         model = Product

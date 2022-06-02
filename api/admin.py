@@ -7,4 +7,4 @@ admin.site.register(Restorant)
 admin.site.register(Product)
 admin.site.register(Type)
 admin.site.register(Order)
-admin.site.register(Star)
+
