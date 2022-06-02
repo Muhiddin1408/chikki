@@ -18,9 +18,6 @@ class Restorant(models.Model):
     def __str__(self):
         return self.name
 
-    @property
-    def get_all_products(self):
-        return list(Product.objects.filter(restaurant_id=self.id).values('id', 'type', 'name', 'text', 'image', 'price'))
 
     @property
     def get_all_type(self):
@@ -42,7 +39,7 @@ class Product(models.Model):
         ('metr', 'metr')
     ]
     name = models.CharField(max_length=125)
-    restaurant = models.ForeignKey(Restorant, on_delete=models.CASCADE)
+    restaurant = models.ForeignKey(Restorant, on_delete=models.CASCADE, related_name='products')
     price = models.FloatField()
     image = models.ImageField(blank=True, null=True)
     measurement = models.CharField(max_length=125, choices=measure)

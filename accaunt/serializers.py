@@ -40,27 +40,43 @@ class RestaurantSerializer(serializers.ModelSerializer):
         )
 
 
+class ProductRestaurantSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Product
+        fields = ['id', 'name', 'price', 'image']
+
+
 class RestaurantSerializerTest(serializers.ModelSerializer):
     # restaurant = serializers.ReadOnlyField(source='restaurant.name')
     # restaurant_image = serializers.ReadOnlyField(source='restaurant.image.url')
+    products = serializers.SerializerMethodField()
 
     class Meta:
         model = Restorant
         fields = [
             'name',
             'image',
-            'get_all_products',
+            'products',
         ]
 
-    def to_representation(self, instance):
-        print(instance, 'id')
-        data = super().to_representation(instance)
-        print(data)
-        # data['get_all_products'] = ProductFilialBaseSerializer(instance=instance.product).data
-        products = data['get_all_products']
-        for p in products:
-            if p.get('type') :
-                print(p.get('type'))
+    def get_products(self, obj):
+        _type = self.context['request'].GET.get('type', 1)
+        if _type:
+            products = obj.products.filter(type=_type)
+        else:
+            products = obj.products.all()
+        serializer = ProductRestaurantSerializer(products, many=True)
+        return serializer.data
+    # def to_representation(self, instance):
+    #     print(instance, 'id')
+    #     data = super().to_representation(instance)
+    #     print(data)
+    #     # data['get_all_products'] = ProductFilialBaseSerializer(instance=instance.product).data
+    #     products = data['get_all_products']
+    #     for p in products:
+    #         if p.get('type') :
+    #             print(p.get('type'))
 
 
 

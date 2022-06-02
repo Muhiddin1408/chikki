@@ -207,18 +207,7 @@ class RestaurantViewset(viewsets.ModelViewSet):
     @action(methods=['get'], detail=False)
     def by_type(self, request):
         restaurant = request.GET.get('restaurant')
-        if request.GET.get('type'):
-            type = int(request.GET.get('type'))
-            # # product = Product.objects.filter(type_id=type)
-            # # print(self.queryset.get_all_products.filter(type_id=type))
-            # for i in self.queryset:
-            #     for k in i.get_all_products:
-            #         type = k.get('type')
-        else:
-            type = 1
-        print(type)
-            # self.queryset.get_all_products.filter(type_id=type)
-        b = Restorant.objects.filter(id=restaurant, product__type=type)
+        b = Restorant.objects.filter(id=restaurant)
         print(b)
         page = self.paginate_queryset(b)
         if page is not None:
